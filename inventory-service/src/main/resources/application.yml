@@ -1,2 +1,32 @@
 server:
   port: 8092
+
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgressql://${DB_HOST:localhost}:${DB_PORT:5435}/${DB_NAME:inventory-db}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  kafka:
+    boostrap-servers: ${KAFKA_BROKER:localhost:9092}
+    topic:
+      orchestrator: orchestrator
+      inventory-success: inventory-success
+      inventory-fail: inventory-fail
+    consumer:
+      group-id: inventory-group
+      auto-offset-reset: latest
+
+logging:
+  level:
+    org:
+      apache:
+        kafka: OFF

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderProducts {
 
-    private String code;
-    private double unitValue;
+    private Product product;
+    private int quantity;
 
 }

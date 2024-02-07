@@ -17,7 +17,7 @@ public class Inventory {
     private Integer id;
     @Column(nullable = false)
     private String productCode;
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private Integer available;
 
 }

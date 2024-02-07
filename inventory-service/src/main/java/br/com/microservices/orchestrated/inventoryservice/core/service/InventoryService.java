@@ -45,23 +45,23 @@ public class InventoryService {
         producer.sendEvent(jsonUtil.toJson(event));
     }
 
-    public void rollbackInventory(Event event){
+    public void rollbackInventory(Event event) {
         event.setStatus(ESagaStatus.FAIL);
         event.setSource(CURRENT_SOURCE);
 
         try {
             returnInventoryToPreviousValues(event);
             addHistory(event, "Rollback executed for inventory!");
-        } catch (Exception e){
+        } catch (Exception e) {
             addHistory(event, "Rollback not executed for inventory: ".concat(e.getMessage()));
         }
 
         producer.sendEvent(jsonUtil.toJson(event));
     }
 
-    private void returnInventoryToPreviousValues(Event event){
+    private void returnInventoryToPreviousValues(Event event) {
         orderInventoryRepository.findByOrderIdAndTransactionId(
-                event.getPayload().getId(), event.getTransactionId())
+                        event.getPayload().getId(), event.getTransactionId())
                 .forEach(orderInventory -> {
                     var inventory = orderInventory.getInventory();
 
@@ -80,14 +80,12 @@ public class InventoryService {
     }
 
     private void updateInventory(Order order) {
-        order
-                .getProducts()
-                .forEach(product -> {
-                    var inventory = findInventoryByProductCode(product.getProduct().getCode());
-                    checkInventory(inventory.getAvailable(), product.getQuantity());
-                    inventory.setAvailable(inventory.getAvailable() - product.getQuantity());
-                    inventoryRepository.save(inventory);
-                });
+        order.getProducts().forEach(product -> {
+            var inventory = findInventoryByProductCode(product.getProduct().getCode());
+            checkInventory(inventory.getAvailable(), product.getQuantity());
+            inventory.setAvailable(inventory.getAvailable() - product.getQuantity());
+            inventoryRepository.save(inventory);
+        });
     }
 
     private void checkInventory(int available, int orderQuantity) {
@@ -124,7 +122,6 @@ public class InventoryService {
                     var orderInventory = createOrderInventory(event, product, inventory);
 
                     orderInventoryRepository.save(orderInventory);
-
                 });
     }
 
